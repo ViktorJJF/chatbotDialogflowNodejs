@@ -108,8 +108,6 @@ async function receivedMessage(event) {
     handleQuickReply(senderId, quickReply, messageId);
     return;
   }
-  saveUserData(senderId);
-
   if (messageText) {
     //send message to dialogflow
     console.log("MENSAJE DEL USUARIO: ", messageText);
@@ -117,22 +115,6 @@ async function receivedMessage(event) {
   } else if (messageAttachments) {
     handleMessageAttachments(messageAttachments, senderId);
   }
-}
-
-async function saveUserData(facebookId) {
-  let isRegistered = await findOne({ facebookId });
-  if (isRegistered) return;
-  let userData = await getUserData(facebookId);
-  let chatbotUser = new ChatbotUser({
-    firstName: userData.first_name,
-    lastName: userData.last_name,
-    facebookId,
-    profilePic: userData.profile_pic,
-  });
-  chatbotUser.save((err, res) => {
-    if (err) return console.log(err);
-    console.log("Se creo un usuario:", res);
-  });
 }
 
 function handleMessageAttachments(messageAttachments, senderId) {
